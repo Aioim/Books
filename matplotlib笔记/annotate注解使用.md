@@ -4,7 +4,9 @@ https://matplotlib.org/stable/tutorials/text/mathtext.html
 
 ### 参数说明：
 
-*`Axes.``annotate`(s, xy, \*args, **kwargs)*
+```
+Axes.annotate(s, xy, *args, **kwargs)
+```
 
 - **s：**注释文本的内容
 - **xy：**被注释的坐标点，二维元组形如(x,y)
