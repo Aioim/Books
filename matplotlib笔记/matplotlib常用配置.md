@@ -49,6 +49,7 @@ axes 或figure类的 legend() 方法负责绘制画布中的图例，它需要�
 ```python
 ax.legend(handles, labels, loc='best', bbox_to_anchor=(0.5, 0., 0.5, 0.5))
 plt.legend(handles, labels, loc='upper right', bbox_to_anchor=(0.5, 0.5))
+# labels需传入列表或者元组，否则会出现内容显示不全的情况
 ```
 
 - labels 是一个字符串序列，用来指定标签的名称；
@@ -383,7 +384,7 @@ plt.show()
 
 ![箱型图结构图](res/14213911N-0-20221022144114378.gif)
 图1：箱型如结构图
- 
+
 
 首先准备创建箱型图所需数据：您可以使用`numpy.random.normal()`函数来创建一组基于正态分布的随机数据，该函数有三个参数，分别是正态分布的平均值、标准差以及期望值的数量。如下所示：
 
