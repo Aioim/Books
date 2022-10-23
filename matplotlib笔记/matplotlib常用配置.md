@@ -220,6 +220,8 @@ plt.legend(loc="lower right")
 #x1、y1表示文本所处坐标位置，ha参数控制水平对齐方式, va控制垂直对齐方式，str(y1)表示要绘制的文本
 for x1, y1 in zip(x, y):
     plt.text(x1, y1, str(y1), ha='center', va='bottom', fontsize=10)
+for x1, y1 in zip(x, df.info): # x,y表示显示内容的坐标位置
+    plt.text(x1, y1,'%.3f'%(y1*100)+'%', ha='center', va='bottom', fontsize=10)
 #保存图片
 plt.savefig("1.jpg")
 plt.show()
