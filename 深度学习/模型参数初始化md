@@ -1,0 +1,118 @@
+PyTorch 提供了多种模型参数初始化的方法,以下是一些常用的初始化方法及其使用示例:
+
+1. **Xavier Initialization (Glorot Initialization)**:
+
+   - 这是一种常用的初始化方法,适用于使用 sigmoid 或 tanh 等激活函数的神经网络。
+
+   - 代码示例:
+
+     ```python
+     import torch.nn as nn
+     
+     def init_weights(m):
+         if isinstance(m, nn.Linear):
+             nn.init.xavier_uniform_(m.weight)
+             m.bias.data.fill_(0.01)
+     
+     model = nn.Sequential(
+         nn.Linear(in_features, hidden_size),
+         nn.ReLU(),
+         nn.Linear(hidden_size, out_features)
+     )
+     model.apply(init_weights)
+     ```
+
+2. **Kaiming Initialization (He Initialization)**:
+
+   - 这是一种针对使用 ReLU 激活函数的神经网络的初始化方法。
+
+   - 代码示例:
+
+     ```python
+     import torch.nn as nn
+     
+     def init_weights(m):
+         if isinstance(m, nn.Linear):
+             nn.init.kaiming_uniform_(m.weight, mode='fan_in', nonlinearity='relu')
+             m.bias.data.fill_(0.01)
+     
+     model = nn.Sequential(
+         nn.Linear(in_features, hidden_size),
+         nn.ReLU(),
+         nn.Linear(hidden_size, out_features)
+     )
+     model.apply(init_weights)
+     ```
+
+3. **Normal Initialization**:
+
+   - 这是一种常见的初始化方法,使用正态分布随机初始化参数。
+
+   - 代码示例:
+
+     ```python
+     import torch.nn as nn
+     
+     def init_weights(m):
+         if isinstance(m, nn.Linear):
+             nn.init.normal_(m.weight, mean=0.0, std=0.02)
+             m.bias.data.fill_(0.01)
+     
+     model = nn.Sequential(
+         nn.Linear(in_features, hidden_size),
+         nn.ReLU(),
+         nn.Linear(hidden_size, out_features)
+     )
+     model.apply(init_weights)
+     ```
+
+4. **Uniform Initialization**:
+
+   - 这是一种使用均匀分布随机初始化参数的方法。
+
+   - 代码示例:
+
+     ```python
+     import torch.nn as nn
+     
+     def init_weights(m):
+         if isinstance(m, nn.Linear):
+             nn.init.uniform_(m.weight, a=-0.1, b=0.1)
+             m.bias.data.fill_(0.01)
+     
+     model = nn.Sequential(
+         nn.Linear(in_features, hidden_size),
+         nn.ReLU(),
+         nn.Linear(hidden_size, out_features)
+     )
+     model.apply(init_weights)
+     ```
+
+5. **Constant Initialization**:
+
+   - 这是一种将参数初始化为常数的方法。
+
+   - 代码示例:
+
+     ```python
+     import torch.nn as nn
+     
+     def init_weights(m):
+         if isinstance(m, nn.Linear):
+             nn.init.constant_(m.weight, 0.1)
+             m.bias.data.fill_(0.01)
+     
+     model = nn.Sequential(
+         nn.Linear(in_features, hidden_size),
+         nn.ReLU(),
+         nn.Linear(hidden_size, out_features)
+     )
+     model.apply(init_weights)
+     ```
+
+在实际使用中,可以根据具体的模型和任务选择合适的初始化方法。通常情况下,Xavier 初始化和 Kaiming 初始化是较为常用的选择。合理的参数初始化可以帮助模型更快地收敛,提高训练效果。
+
+
+
+![image-20240716204641860](./assets/image-20240716204641860.png)
+
