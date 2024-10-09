@@ -1,7 +1,8 @@
 import numpy as np
 import torch
 import shutil
-
+import math
+from matplotlib import pyplot as plt
 
 # 创建训练数据集
 def create_dataset(data, label_col, step=1, additional=0):
@@ -53,3 +54,25 @@ def check_point(model, optim, epoch, path, isBest):
     torch.save(check_point, path)
     if isBest:
         shutil.copyfile(path, "model_best.pkl")
+
+
+  
+def plot_lr():
+    num_warmup_steps=1000
+    num_training_steps=70000
+    lr = 0.01
+    res_list = []
+    for current_step in range(70000):
+        if current_step < num_warmup_steps:
+            res = float(current_step) / float(max(1, num_warmup_steps))
+            res_list.append(res * lr)
+            continue
+        progress = float(current_step - num_warmup_steps) / float(
+                    max(1, num_training_steps - num_warmup_steps)
+                )
+        res = 0.5 * (1.0 + math.cos(math.pi * float(0.5) * 2.0 * progress))
+        res_list.append(res * lr)
+
+    plt.plot(res_list)
+    plt.title(f'Trend of Learning Rate\nnum_warmup_steps={num_warmup_steps}\nnum_training_steps={num_training_steps}')
+    plt.show()
