@@ -65,17 +65,14 @@ class PositionalEncoding(nn.Module):
         super(PositionalEncoding, self).__init__()
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(
-            torch.arange(0, d_model, 2).float() * (-np.log(10000.0) / d_model)
-        )
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-np.log(10000.0) / d_model))
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0).transpose(0, 1)
-        self.register_buffer("pe", pe)
+        self.register_buffer('pe', pe)
 
     def forward(self, x):
-        return x + self.pe[: x.size(0), :]
-
+        return x + self.pe[:x.size(0), :]
 
 seq_length = 15
 num_samples = 1000
@@ -84,39 +81,23 @@ num_features = 6
 
 # 定义时间序列预测模型
 class MultivariateTimeSeriesTransformer(nn.Module):
-    def __init__(
-        self,
-        input_size,
-        num_heads,
-        hidden_size,
-        num_layers,
-        dim_feedforward,
-        dropout=0.1,
-    ):
-        super().__init__()
-        self.positional_encoding = PositionalEncoding(input_size)
-        self.pre_fc1 = nn.Linear(input_size, dim_feedforward)
-        self.pre_fc2 = nn.Linear(dim_feedforward, input_size)
-        self.attn = nn.MultiheadAttention(
-            input_size, num_heads, dropout, batch_first=True
-        )
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.faltten = nn.Flatten()
-        self.out_fc1 = nn.Linear()
-        self.out_fc2 = nn.Linear()
+    def __init__(self, input_dim, embed_size, num_heads, num_layers, dim_feedforward, dropout=0.1):
+        super(MultivariateTimeSeriesTransformer, self).__init__()
+        self.embedding = nn.Linear(input_dim, embed_size)
+        self.positional_encoding = PositionalEncoding(embed_size)
+        self.encoder_layers = nn.ModuleList([
+            nn.TransformerEncoderLayer(embed_size, num_heads, dim_feedforward, dropout)
+            for _ in range(num_layers)
+        ])
+        self.fc = nn.Linear(embed_size, input_dim)
 
     def forward(self, x):
-        hidden = None
+        x = self.embedding(x)
         x = self.positional_encoding(x)
-        x = self.pre_fc1(x)
-        x = self.pre_fc2(x)
-        x = self.attn(x)
-        x, hidden = self.lstm(x, hidden)
-        x = self.faltten(x)
-        x = self.out_fc1(x)
-        x = self.out_fc2(x)
+        for layer in self.encoder_layers:
+            x = layer(x)
+        x = self.fc(x)
         return x
-
 
 # 模型初始化
 input_dim = num_features
@@ -126,9 +107,7 @@ num_layers = 3
 dim_feedforward = 256
 dropout = 0.1
 
-model = MultivariateTimeSeriesTransformer(
-    input_dim, embed_size, num_heads, num_layers, dim_feedforward, dropout
-)
+model = MultivariateTimeSeriesTransformer(input_dim, embed_size, num_heads, num_layers, dim_feedforward, dropout)
 
 model = MultivariateTimeSeriesTransformer(
     input_dim, embed_size, num_heads, num_layers, dim_feedforward, dropout
